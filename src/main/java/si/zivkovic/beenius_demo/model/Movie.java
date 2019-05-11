@@ -12,10 +12,11 @@ import java.util.Date;
 @Table(name = "movie")
 public class Movie {
 
+	// Use imdbId instead of generatedId
+	//@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id", nullable = false)
-	private Long id;
+	@Column(name = "imdbId", nullable = false)
+	private long imdbId;
 
 	@Column(name = "title", nullable = false)
 	@NotNull(message = "Movie title is required!")
@@ -29,26 +30,31 @@ public class Movie {
 	@NotNull(message = "Movie year is required!")
 	private int year;
 
+	@Lob
+	@Column(name = "posterImage")
+	private byte[] posterImage;
+
 	//private List<Actor> actorList;
 
 	@CreatedBy
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created", nullable = false)
 	private Date created;
 
 	@LastModifiedDate
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modified", nullable = false)
 	private Date modified;
 
-	// TODO images...
-
 	public Movie() {}
 
-	public Movie(final String title, final String description, final int year) {// final List<Actor> actorList
+	public Movie(final long imdbId, final String title, final String description, final int year,
+			final byte[] posterImage) {// final List<Actor> actorList
+		this.imdbId = imdbId;
 		this.title = title;
 		this.description = description;
 		this.year = year;
+		this.posterImage = posterImage;
 		//this.actorList = actorList;
 	}
 
@@ -63,8 +69,12 @@ public class Movie {
 		this.modified = new Date();
 	}
 
-	public Long getId() {
-		return id;
+	public Long getImdbId() {
+		return imdbId;
+	}
+
+	public void setImdbId(final long imdbId) {
+		this.imdbId = imdbId;
 	}
 
 	public String getTitle() {
@@ -89,6 +99,14 @@ public class Movie {
 
 	public void setYear(int year) {
 		this.year = year;
+	}
+
+	public byte[] getPosterImage() {
+		return posterImage;
+	}
+
+	public void setPosterImage(byte[] posterImage) {
+		this.posterImage = posterImage;
 	}
 
 	public Date getCreated() {

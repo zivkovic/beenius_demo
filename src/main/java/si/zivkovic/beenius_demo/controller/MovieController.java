@@ -1,5 +1,6 @@
 package si.zivkovic.beenius_demo.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,8 +22,8 @@ public class MovieController {
 	private MovieService movieService;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Movie> insertMovie(@RequestBody Movie movie) {
-		return ResponseEntity.ok(movieService.insertMovie(movie));
+	public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
+		return ResponseEntity.ok(movieService.saveMovie(movie));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path = "/{id}")
@@ -55,6 +56,41 @@ public class MovieController {
 		return ResponseEntity.ok(movieList);
 	}
 
+	@RequestMapping(method = RequestMethod.GET, path = "/all/search")
+	public ResponseEntity searchMovies(@RequestParam("search") @NotNull final String searchString) {
+		if(StringUtils.isBlank(searchString)) {
+			return ResponseEntity.badRequest().body("Parameter 'search' is missing or empty!");
+		}
 
+		final List<Movie> movieList = movieService.findMoviesBySearchString(searchString);
+
+		return ResponseEntity.ok(movieList);
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
+	public ResponseEntity deleteMovie(@PathVariable(value = "id") @NotNull final long id) {
+		if(id <= 0) {
+			return ResponseEntity.badRequest().body("Id must be positive");
+		}
+
+		final Movie movie = movieService.getMovie(id);
+
+		if(movie == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		movieService.deleteMovie(movie);
+
+		return ResponseEntity.ok(movie);
+	}
+
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity updateMovie(@RequestBody @NotNull final Movie movie) {
+		if(!movieService.movieExists(movie.getImdbId())) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok(movieService.saveMovie(movie));
+	}
 
 }
