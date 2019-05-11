@@ -10,9 +10,8 @@ import si.zivkovic.beenius_demo.model.Movie;
 
 import java.util.List;
 
-
 @Repository
-public interface MovieRepository extends JpaRepository<Movie, Long> {
+public interface MovieRepository extends JpaRepository<Movie, String> {
 
 	Page<Movie> findAll(final Pageable pageable);
 
@@ -27,4 +26,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 			" OR year like :searchString")
 	List<Movie> findMoviesBySearchStringOnAllFields(@Param("searchString") final String searchString);
 	 */
+
 }

@@ -1,40 +1,57 @@
 package si.zivkovic.beenius_demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
+@JsonIdentityInfo(
+	generator = ObjectIdGenerators.PropertyGenerator.class,
+	property = "imdbId"
+)
 @Entity
-@Table(name = "movie")
+@Table(name = "MOVIE")
 public class Movie {
 
 	// Use imdbId instead of generatedId
 	//@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
 	@Column(name = "imdbId", nullable = false)
-	private long imdbId;
+	private String imdbId;
 
-	@Column(name = "title", nullable = false)
 	@NotNull(message = "Movie title is required!")
 	@NotEmpty(message = "Movie title must not be empty!")
+	@Column(name = "title", nullable = false)
 	private String title;
 
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "year", nullable = false)
 	@NotNull(message = "Movie year is required!")
+	@Column(name = "year", nullable = false)
 	private int year;
 
 	@Lob
 	@Column(name = "posterImage")
 	private byte[] posterImage;
 
-	//private List<Actor> actorList;
+	@ManyToMany(
+		fetch = FetchType.LAZY
+	)
+	@JoinTable(
+		name = "MOVIE_ACTOR",
+		joinColumns = @JoinColumn(name = "imdbId"),
+		inverseJoinColumns = @JoinColumn(name = "id")
+	)
+	private List<Actor> actorList;
 
 	@CreatedBy
 	@Temporal(TemporalType.TIMESTAMP)
@@ -45,18 +62,6 @@ public class Movie {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modified", nullable = false)
 	private Date modified;
-
-	public Movie() {}
-
-	public Movie(final long imdbId, final String title, final String description, final int year,
-			final byte[] posterImage) {// final List<Actor> actorList
-		this.imdbId = imdbId;
-		this.title = title;
-		this.description = description;
-		this.year = year;
-		this.posterImage = posterImage;
-		//this.actorList = actorList;
-	}
 
 	@PrePersist
 	protected void onCreate() {
@@ -69,11 +74,26 @@ public class Movie {
 		this.modified = new Date();
 	}
 
-	public Long getImdbId() {
+	public Movie() {
+		this.created = this.modified = new Date();
+		this.actorList = new ArrayList<>();
+	}
+
+	public Movie(final String imdbId, final String title, final String description, final int year,
+			final byte[] posterImage, final List<Actor> actorList) {
+		this.imdbId = imdbId;
+		this.title = title;
+		this.description = description;
+		this.year = year;
+		this.posterImage = posterImage;
+		this.actorList = actorList;
+	}
+
+	public String getImdbId() {
 		return imdbId;
 	}
 
-	public void setImdbId(final long imdbId) {
+	public void setImdbId(final String imdbId) {
 		this.imdbId = imdbId;
 	}
 
@@ -109,15 +129,6 @@ public class Movie {
 		this.posterImage = posterImage;
 	}
 
-	public Date getCreated() {
-		return created;
-	}
-
-	public Date getModified() {
-		return modified;
-	}
-
-	/*
 	public List<Actor> getActorList() {
 		return actorList;
 	}
@@ -126,12 +137,27 @@ public class Movie {
 		this.actorList = actorList;
 	}
 
+	public Date getCreated() {
+		return created;
+	}
+
+	public Date getModified() {
+		return modified;
+	}
+
 	public void addActor(final Actor actor) {
-		if(this.actorList == null) {
-			this.actorList = new ArrayList<Actor>();
-		}
 		this.actorList.add(actor);
 	}
-	 */
+
+	public void removeActor(final Actor actor) {
+		final Iterator<Actor> it = this.actorList.iterator();
+		while(it.hasNext()) {
+			final Actor currentActor = it.next();
+			if(currentActor.getId() == actor.getId()) {
+				it.remove();
+				return;
+			}
+		}
+	}
 
 }

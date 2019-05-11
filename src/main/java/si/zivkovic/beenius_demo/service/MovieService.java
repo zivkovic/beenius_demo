@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import si.zivkovic.beenius_demo.model.Actor;
 import si.zivkovic.beenius_demo.model.Movie;
 import si.zivkovic.beenius_demo.repository.MovieRepository;
 
@@ -13,6 +14,9 @@ import java.util.List;
 public class MovieService {
 
 	@Autowired
+	private ActorService actorService;
+
+	@Autowired
 	private MovieRepository movieRepository;
 
 	public Movie saveMovie(final Movie movie) {
@@ -20,7 +24,7 @@ public class MovieService {
 		return movieRepository.save(movie);
 	}
 
-	public Movie getMovie(final long id) {
+	public Movie getMovie(final String id) {
 		// Do some business logic here, for now just return movie
 		return movieRepository.findOne(id);
 	}
@@ -46,8 +50,28 @@ public class MovieService {
 		movieRepository.delete(movie);
 	}
 
-	public boolean movieExists(final long id) {
+	public boolean movieExists(final String id) {
 		return movieRepository.exists(id);
+	}
+
+	public Movie addActorToMovie(final String movieId, final long actorId) {
+		final Movie movie = getMovie(movieId);
+		final Actor actor = actorService.getActor(actorId);
+		movie.addActor(actor);
+		actor.addMovie(movie);
+
+		actorService.saveActor(actor);
+		return saveMovie(movie);
+	}
+
+	public Movie removeActorFromMovie(final String movieId, final long actorId) {
+		final Movie movie = getMovie(movieId);
+		final Actor actor = actorService.getActor(actorId);
+		movie.removeActor(actor);
+		actor.removeMovie(movie);
+
+		actorService.saveActor(actor);
+		return saveMovie(movie);
 	}
 
 }
