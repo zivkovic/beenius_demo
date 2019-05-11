@@ -1,0 +1,19 @@
+/actor/1:
+	GET: 2
+
+/movie:
+	POST: 2
+
+/movie/all/0:
+	GET: 1
+
+/movie/tt0111161:
+	GET: 5
+
+/movie/tt0111161/actor/1:
+	DELETE: 1
+	POST: 1
+
+/actor:
+	POST: 1
+
