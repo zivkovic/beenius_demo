@@ -36,7 +36,7 @@ public class MovieController {
 
 	@Cacheable(cacheNames = "getMovieCache", key = "#id")
 	@RequestMapping(method = RequestMethod.GET, path = "/{id}")
-	public ResponseEntity<Movie> getMovie(@PathVariable @NotNull final String id) {
+	public ResponseEntity getMovie(@PathVariable @NotNull final String id) {
 		Movie movie = movieService.getMovie(id);
 
 		if(movie == null) {
@@ -88,6 +88,10 @@ public class MovieController {
 	@Cacheable(cacheNames = "getMoviesWithPagingCache", key = "#page")
 	@RequestMapping(method = RequestMethod.GET, path = "/all/{page}")
 	public ResponseEntity getMoviesWithPaging(@PathVariable(value = "page") int page) {
+		if(page <= 0) {
+			return ResponseEntity.badRequest().body("Page must be positive.");
+		}
+
 		final Page<Movie> movieList = movieService.getMoviesWithPaging(new PageRequest(page, PAGING_SIZE));
 
 		if(movieList == null) {

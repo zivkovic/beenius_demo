@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class ActorController {
 
 	private static final int PAGING_SIZE = 10;
-	private final CacheControl cacheControl = CacheControl.maxAge(5, TimeUnit.MINUTES);
+	private static final CacheControl cacheControl = CacheControl.maxAge(5, TimeUnit.MINUTES);
 
 	@Autowired
 	private ActorService actorService;
@@ -33,7 +33,7 @@ public class ActorController {
 	@RequestMapping(method = RequestMethod.GET, path = "/{id}")
 	public ResponseEntity getActor(@PathVariable @NotNull final long id) {
 		if(id <= 0) {
-			return ResponseEntity.badRequest().body("Id must be positive");
+			return ResponseEntity.badRequest().body("Id must be positive.");
 		}
 
 		final Actor actor = actorService.getActor(id);
@@ -59,6 +59,9 @@ public class ActorController {
 	@Cacheable(cacheNames = "getActorsWithPagingCache", key = "#page")
 	@RequestMapping(method = RequestMethod.GET, path = "/all/{page}")
 	public ResponseEntity getActorsWithPaging(@PathVariable(value = "page") int page) {
+		if(page <= 0) {
+			return ResponseEntity.badRequest().body("Page must be positive.");
+		}
 		final Page<Actor> actorList = actorService.getActorsWithPaging(new PageRequest(page, PAGING_SIZE));
 
 		if(actorList == null) {
@@ -71,7 +74,7 @@ public class ActorController {
 	@RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
 	public ResponseEntity deleteActor(@PathVariable(value = "id") @NotNull final long id) {
 		if(id <= 0) {
-			return ResponseEntity.badRequest().body("Id must be positive");
+			return ResponseEntity.badRequest().body("Id must be positive.");
 		}
 
 		final Actor actor = actorService.getActor(id);
