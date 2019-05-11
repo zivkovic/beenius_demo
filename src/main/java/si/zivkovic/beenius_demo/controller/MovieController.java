@@ -2,8 +2,10 @@ package si.zivkovic.beenius_demo.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import si.zivkovic.beenius_demo.model.Movie;
@@ -12,12 +14,14 @@ import si.zivkovic.beenius_demo.service.MovieService;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/movie")
 public class MovieController {
 
 	private static final int PAGING_SIZE = 10;
+	private static final CacheControl cacheControl = CacheControl.maxAge(5, TimeUnit.MINUTES);
 
 	@Autowired
 	private MovieService movieService;
@@ -30,6 +34,7 @@ public class MovieController {
 		return ResponseEntity.ok(movieService.saveMovie(movie));
 	}
 
+	@Cacheable(cacheNames = "getMovieCache", key = "#id")
 	@RequestMapping(method = RequestMethod.GET, path = "/{id}")
 	public ResponseEntity<Movie> getMovie(@PathVariable @NotNull final String id) {
 		Movie movie = movieService.getMovie(id);
@@ -37,7 +42,7 @@ public class MovieController {
 		if(movie == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(movie);
+		return ResponseEntity.ok().cacheControl(cacheControl).body(movie);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, path = "/{movieId}/actor/{actorId}")
@@ -68,6 +73,7 @@ public class MovieController {
 		return ResponseEntity.ok(movieService.removeActorFromMovie(movieId, actorId));
 	}
 
+	@Cacheable(cacheNames = "getMoviesCache")
 	@RequestMapping(method = RequestMethod.GET, path = "/all")
 	public ResponseEntity getMovies() {
 		final List<Movie> movieList = movieService.getMovies();
@@ -75,9 +81,11 @@ public class MovieController {
 		if(movieList == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(movieList);
+		return ResponseEntity.ok().cacheControl(cacheControl).body(movieList);
+
 	}
 
+	@Cacheable(cacheNames = "getMoviesWithPagingCache", key = "#page")
 	@RequestMapping(method = RequestMethod.GET, path = "/all/{page}")
 	public ResponseEntity getMoviesWithPaging(@PathVariable(value = "page") int page) {
 		final Page<Movie> movieList = movieService.getMoviesWithPaging(new PageRequest(page, PAGING_SIZE));
@@ -85,9 +93,10 @@ public class MovieController {
 		if(movieList == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(movieList);
+		return ResponseEntity.ok().cacheControl(cacheControl).body(movieList);
 	}
 
+	@Cacheable(cacheNames = "searchMoviesCache", key = "#searchString")
 	@RequestMapping(method = RequestMethod.GET, path = "/all/search")
 	public ResponseEntity searchMovies(@RequestParam("search") @NotNull final String searchString) {
 		if(StringUtils.isBlank(searchString)) {
@@ -96,7 +105,7 @@ public class MovieController {
 
 		final List<Movie> movieList = movieService.findMoviesBySearchString(searchString);
 
-		return ResponseEntity.ok(movieList);
+		return ResponseEntity.ok().cacheControl(cacheControl).body(movieList);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, path = "/{id}")

@@ -1,8 +1,10 @@
 package si.zivkovic.beenius_demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import si.zivkovic.beenius_demo.model.Actor;
@@ -10,12 +12,14 @@ import si.zivkovic.beenius_demo.service.ActorService;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping(path = "/actor")
 public class ActorController {
 
 	private static final int PAGING_SIZE = 10;
+	private final CacheControl cacheControl = CacheControl.maxAge(5, TimeUnit.MINUTES);
 
 	@Autowired
 	private ActorService actorService;
@@ -25,6 +29,7 @@ public class ActorController {
 		return ResponseEntity.ok(actorService.saveActor(actor));
 	}
 
+	@Cacheable(cacheNames = "getActorCache", key = "#id")
 	@RequestMapping(method = RequestMethod.GET, path = "/{id}")
 	public ResponseEntity getActor(@PathVariable @NotNull final long id) {
 		if(id <= 0) {
@@ -36,9 +41,10 @@ public class ActorController {
 		if(actor == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(actor);
+		return ResponseEntity.ok().cacheControl(cacheControl).body(actor);
 	}
 
+	@Cacheable(cacheNames = "getActorsCache")
 	@RequestMapping(method = RequestMethod.GET, path = "/all")
 	public ResponseEntity getActors() {
 		final List<Actor> actorList = actorService.getActors();
@@ -46,9 +52,11 @@ public class ActorController {
 		if(actorList == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(actorList);
+		return ResponseEntity.ok().cacheControl(cacheControl).body(actorList);
+
 	}
 
+	@Cacheable(cacheNames = "getActorsWithPagingCache", key = "#page")
 	@RequestMapping(method = RequestMethod.GET, path = "/all/{page}")
 	public ResponseEntity getActorsWithPaging(@PathVariable(value = "page") int page) {
 		final Page<Actor> actorList = actorService.getActorsWithPaging(new PageRequest(page, PAGING_SIZE));
@@ -56,7 +64,8 @@ public class ActorController {
 		if(actorList == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(actorList);
+
+		return ResponseEntity.ok().cacheControl(cacheControl).body(actorList);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
