@@ -88,7 +88,7 @@ public class MovieController {
 	@Cacheable(cacheNames = "getMoviesWithPagingCache", key = "#page")
 	@RequestMapping(method = RequestMethod.GET, path = "/all/{page}")
 	public ResponseEntity getMoviesWithPaging(@PathVariable(value = "page") int page) {
-		if(page <= 0) {
+		if(page < 0) {
 			return ResponseEntity.badRequest().body("Page must be positive.");
 		}
 

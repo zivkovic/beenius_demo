@@ -130,6 +130,9 @@ public class Movie {
 	}
 
 	public List<Actor> getActorList() {
+		if(this.actorList == null) {
+			return new ArrayList<>();
+		}
 		return actorList;
 	}
 
@@ -146,11 +149,11 @@ public class Movie {
 	}
 
 	public void addActor(final Actor actor) {
-		this.actorList.add(actor);
+		getActorList().add(actor);
 	}
 
 	public void removeActor(final Actor actor) {
-		final Iterator<Actor> it = this.actorList.iterator();
+		final Iterator<Actor> it = getActorList().iterator();
 		while(it.hasNext()) {
 			final Actor currentActor = it.next();
 			if(currentActor.getId() == actor.getId()) {

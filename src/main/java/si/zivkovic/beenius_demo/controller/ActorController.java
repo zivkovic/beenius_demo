@@ -59,7 +59,7 @@ public class ActorController {
 	@Cacheable(cacheNames = "getActorsWithPagingCache", key = "#page")
 	@RequestMapping(method = RequestMethod.GET, path = "/all/{page}")
 	public ResponseEntity getActorsWithPaging(@PathVariable(value = "page") int page) {
-		if(page <= 0) {
+		if(page < 0) {
 			return ResponseEntity.badRequest().body("Page must be positive.");
 		}
 		final Page<Actor> actorList = actorService.getActorsWithPaging(new PageRequest(page, PAGING_SIZE));

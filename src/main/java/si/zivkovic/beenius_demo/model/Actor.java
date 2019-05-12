@@ -124,14 +124,14 @@ public class Actor {
 	}
 
 	public void addMovie(final Movie movie) {
-		this.movieList.add(movie);
+		getMovieList().add(movie);
 	}
 
 	public void removeMovie(final Movie movie) {
-		final Iterator<Movie> it = this.movieList.iterator();
+		final Iterator<Movie> it = getMovieList().iterator();
 		while(it.hasNext()) {
 			final Movie currentMovie = it.next();
-			if(currentMovie.getImdbId() == movie.getImdbId()) {
+			if(currentMovie.getImdbId().equals(movie.getImdbId())) {
 				it.remove();
 				return;
 			}
