@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import si.zivkovic.beenius_demo.model.Actor;
 import si.zivkovic.beenius_demo.repository.ActorRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +24,7 @@ public class ActorRepositoryTest {
 	@Test
 	public void testInsertionFetchingAndDeletion() {
 		final Actor actor = new Actor(
-				"Janez", "Novak", new Date()
+				"Janez", "Novak", new Date(), new ArrayList<>()
 		);
 
 		assertThat(actorRepository.save(actor)).isNotNull();
@@ -37,10 +38,10 @@ public class ActorRepositoryTest {
 	@Test
 	public void testMultiInsertionFetchingAndDeletion() {
 		final Actor actor = new Actor(
-				"Janez", "Novak", new Date()
+				"Janez", "Novak", new Date(), new ArrayList<>()
 		);
 		final Actor actor1 = new Actor(
-				"Jana", "Novak", new Date()
+				"Jana", "Novak", new Date(), new ArrayList<>()
 		);
 
 		assertThat(actorRepository.save(actor)).isNotNull();
@@ -58,7 +59,7 @@ public class ActorRepositoryTest {
 		final int size = 13;
 		for(int i = 0; i < size; i++) {
 			final Actor actor = new Actor(
-					"Janez" + i, "Novak", new Date()
+					"Janez" + i, "Novak", new Date(), new ArrayList<>()
 			);
 			assertThat(actorRepository.save(actor)).isNotNull();
 		}

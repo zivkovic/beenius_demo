@@ -94,7 +94,7 @@ public class ActorController {
 			return ResponseEntity.notFound().build();
 		}
 
-		return ResponseEntity.ok(actorService.saveActor(actor));
+		return ResponseEntity.ok(actorService.updateActor(actor));
 	}
 
 }

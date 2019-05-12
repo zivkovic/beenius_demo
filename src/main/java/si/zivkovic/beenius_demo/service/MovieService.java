@@ -46,7 +46,17 @@ public class MovieService {
 		return movieRepository.findMoviesBySearchString(searchString);
 	}
 
+	public Movie updateMovie(final Movie newMovie) {
+		final Movie oldMovie = movieRepository.getOne(newMovie.getImdbId());
+		oldMovie.update(newMovie);
+		return saveMovie(oldMovie);
+	}
+
 	public void deleteMovie(final Movie movie) {
+		for(final Actor actor: movie.getActorList()) {
+			actor.removeMovie(movie);
+			actorService.saveActor(actor);
+		}
 		movieRepository.delete(movie);
 	}
 

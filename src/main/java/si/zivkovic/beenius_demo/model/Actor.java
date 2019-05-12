@@ -2,6 +2,8 @@ package si.zivkovic.beenius_demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -65,15 +67,13 @@ public class Actor {
 		this.modified = new Date();
 	}
 
-	public Actor() {
-		this.created = this.modified = new Date();
-		this.movieList = new ArrayList<>();
-	}
+	public Actor() {}
 
-	public Actor(String firstName, String lastName, Date dateOfBirth) {
+	public Actor(String firstName, String lastName, Date dateOfBirth, final List<Movie> movieList) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.dateOfBirth = dateOfBirth;
+		this.movieList = movieList;
 	}
 
 	public long getId() {
@@ -135,6 +135,24 @@ public class Actor {
 				it.remove();
 				return;
 			}
+		}
+	}
+
+	public void update(final Actor fromActor) {
+		if(getId() != fromActor.getId()) {
+			return;
+		}
+		if(StringUtils.isNotBlank(fromActor.getFirstName())) {
+			this.firstName = fromActor.getFirstName();
+		}
+		if(StringUtils.isNotBlank(fromActor.getLastName())) {
+			this.lastName = fromActor.getLastName();
+		}
+		if(fromActor.getDateOfBirth() != null) {
+			this.dateOfBirth = fromActor.getDateOfBirth();
+		}
+		if(CollectionUtils.isNotEmpty(fromActor.getMovieList())) {
+			this.movieList = fromActor.getMovieList();
 		}
 	}
 

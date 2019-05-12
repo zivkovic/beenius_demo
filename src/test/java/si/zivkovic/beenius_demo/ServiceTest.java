@@ -84,7 +84,7 @@ public class ServiceTest {
 				2019, null, new ArrayList<>()
 		);
 		final Actor actor = new Actor(
-				"Janez", "Novak", new Date()
+				"Janez", "Novak", new Date(), new ArrayList<>()
 		);
 
 		given(movieRepository.findOne(movie.getImdbId())).willReturn(movie);

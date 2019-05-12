@@ -2,6 +2,8 @@ package si.zivkovic.beenius_demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -74,10 +76,7 @@ public class Movie {
 		this.modified = new Date();
 	}
 
-	public Movie() {
-		this.created = this.modified = new Date();
-		this.actorList = new ArrayList<>();
-	}
+	public Movie() {}
 
 	public Movie(final String imdbId, final String title, final String description, final int year,
 			final byte[] posterImage, final List<Actor> actorList) {
@@ -160,6 +159,27 @@ public class Movie {
 				it.remove();
 				return;
 			}
+		}
+	}
+
+	public void update(final Movie fromMovie) {
+		if(!getImdbId().equals(fromMovie.getImdbId())) {
+			return;
+		}
+		if(StringUtils.isNotBlank(fromMovie.getTitle())) {
+			this.title = fromMovie.getTitle();
+		}
+		if(StringUtils.isNotBlank(fromMovie.getDescription())) {
+			this.description = fromMovie.getDescription();
+		}
+		if(fromMovie.getYear() > 0) {
+			this.year = fromMovie.getYear();
+		}
+		if(fromMovie.getPosterImage() != null) {
+			this.posterImage = fromMovie.getPosterImage();
+		}
+		if(CollectionUtils.isNotEmpty(fromMovie.getActorList())) {
+			this.actorList = fromMovie.getActorList();
 		}
 	}
 

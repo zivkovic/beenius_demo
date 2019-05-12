@@ -135,7 +135,7 @@ public class MovieController {
 			return ResponseEntity.notFound().build();
 		}
 
-		return ResponseEntity.ok(movieService.saveMovie(movie));
+		return ResponseEntity.ok(movieService.updateMovie(movie));
 	}
 
 }
