@@ -1,0 +1,233 @@
+{
+	"variables": [],
+	"info": {
+		"name": "beenius_demo",
+		"_postman_id": "c0b53706-676c-7e48-ba66-04faee3a783d",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Save movie",
+			"request": {
+				"url": "http://localhost:8080/movie",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"imdbId\": \"tt0111161\",\n\t\"title\": \"The Shawshank Redemption\",\n\t\"description\": \"#1 IMDB Top 250\",\n\t\"year\": 1994\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get movie",
+			"request": {
+				"url": "http://localhost:8080/movie/tt0111161",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get movies",
+			"request": {
+				"url": "http://localhost:8080/movie/all",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get movies with paging",
+			"request": {
+				"url": "http://localhost:8080/movie/all/0",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Search movies",
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/movie/all/search?search=Shaw",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"movie",
+						"all",
+						"search"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "Shaw",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update movie",
+			"request": {
+				"url": "http://localhost:8080/movie/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"imdbId\": \"tt0111161\",\n\t\"title\": \"title_here\",\n\t\"description\": \"description_here\",\n\t\"year\": 1994\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete movie",
+			"request": {
+				"url": "http://localhost:8080/movie/tt0111161",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create actor",
+			"request": {
+				"url": "http://localhost:8080/actor",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"firstName\": \"Morgan\",\n\t\"lastName\": \"Freeman\",\n\t\"dateOfBirth\": \"1937-06-01\"\n}\n\t\t\t"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get actor",
+			"request": {
+				"url": "http://localhost:8080/actor/1",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get actors",
+			"request": {
+				"url": "http://localhost:8080/actor/all",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get actors with paging",
+			"request": {
+				"url": "http://localhost:8080/actor/all/0",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update actor",
+			"request": {
+				"url": "http://localhost:8080/actor",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"firstName\": \"Morgan1\",\n\t\"lastName\": \"Freeman\",\n\t\"dateOfBirth\": \"1937-06-01\"\n}\n\t\t\t"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete actor",
+			"request": {
+				"url": "http://localhost:8080/actor/1",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add actor to movie",
+			"request": {
+				"url": "http://localhost:8080/movie/tt0111161/actor/1",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Remove actor from movie",
+			"request": {
+				"url": "http://localhost:8080/movie/tt0111161/actor/1",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
